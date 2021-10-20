@@ -75,5 +75,36 @@ namespace CodeChallenge.Services.Customers.Api.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ProducesResponseType(typeof(NewAccountResponse), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<NewAccountResponse>> NewAccountAsync([FromBody] NewAccountRequest request)
+        {
+            try
+            {
+                var accountNumber = "";
+                var account = new CustomerAccount()
+                {
+                    AccountNumber = accountNumber,
+                    AccountName = request.AccountName,
+                    CurrentBalance = 0M,
+                    Created = DateTime.Now
+                };
+
+                await _customerContext.CustomerAccounts.AddAsync(account);
+
+                await _customerContext.SaveChangesAsync();
+
+                var res = new NewAccountResponse().ToSuccess("Create account success.");
+                res.AccountNumber = account.AccountNumber;
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[{AppName}] ERROR create customer account: {Exception} with {NewAccountRequest}", Program.AppName, ex, request);
+                return BadRequest();
+            }
+        }
+
     }
 }
