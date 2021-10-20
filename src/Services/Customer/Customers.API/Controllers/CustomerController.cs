@@ -29,18 +29,18 @@ namespace CodeChallenge.Services.Customers.Api.Controllers
             _customerContext = customerContext;
         }
 
-        [HttpGet]
-        [ProducesResponseType(typeof(ResultSet<Customer>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<ResultSet<Customer>>> GetCustomerResultSetAsync(
+        [HttpGet("account")]
+        [ProducesResponseType(typeof(ResultSet<CustomerAccount>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<ResultSet<CustomerAccount>>> GetAccountResultSetAsync(
             [FromQuery] string q,
             [FromQuery] int? page = 1,
             [FromQuery] int? rows = 10)
         {
             try
             {
-                var customers = _customerContext.Customers
+                var accounts = _customerContext.CustomerAccounts
                     .AsQueryable();
-                var resultSet = new CustomerResult(customers, (int)rows);
+                var resultSet = new CustomerAccountResult(accounts, (int)rows);
                 if( !string.IsNullOrEmpty(q))
                 {
                     resultSet.ApplySearchFilter(q);
@@ -54,23 +54,23 @@ namespace CodeChallenge.Services.Customers.Api.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Customer), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<Customer>> GetCustomerByIdAsync(int id)
+        [HttpGet("account/{number}")]
+        [ProducesResponseType(typeof(CustomerAccount), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<CustomerAccount>> GetAccountByNumberAsync(string number)
         {
             try
             {
-                var customer = await _customerContext.Customers
-                    .SingleOrDefaultAsync(r => r.Id == id);
+                var customer = await _customerContext.CustomerAccounts
+                    .SingleOrDefaultAsync(a => a.AccountNumber == number);
                 if (customer == null)
                 {
-                    return NotFound(new { Message = $"Customer with id {id} not found." });
+                    return NotFound(new { Message = $"Customer's account with number {number} not found." });
                 }
                 return Ok(customer);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[{AppName}] ERROR get Customer by id: {Exception} with {Customer}", Program.AppName, ex, id);
+                _logger.LogError(ex, "[{AppName}] ERROR get Customer's account by number: {Exception} with {number}", Program.AppName, ex, number);
                 return BadRequest();
             }
         }

@@ -23,17 +23,17 @@ namespace CodeChallenge.Services.Transactions.Api.Infrastructure.EntityConfigura
             builder.Property(cb => cb.Fee)
                 .IsRequired();
 
-            builder.Property(cb => cb.CustomerId)
-                .HasMaxLength(11)
+            builder.Property(cb => cb.AccountNumber)
+                .HasMaxLength(30)
                 .IsRequired();
 
-            builder.Property(cb => cb.CustomerName)
+            builder.Property(cb => cb.AccountName)
                 .HasMaxLength(150);
 
-            builder.Property(cb => cb.RecieverId)
-                .HasMaxLength(11);
+            builder.Property(cb => cb.RecieverAccountNumber)
+                .HasMaxLength(30);
 
-            builder.Property(cb => cb.RecieverName)
+            builder.Property(cb => cb.RecieverAccountName)
                 .HasMaxLength(150);
 
          }

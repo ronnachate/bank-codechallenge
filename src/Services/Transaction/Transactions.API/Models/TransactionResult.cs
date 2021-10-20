@@ -27,11 +27,11 @@ namespace CodeChallenge.Services.Transactions.Api.Models
             _transactions = _transactions.Where(t => t.TransactionTypeId == typeId);
         }
 
-        public void ApplyCustomerFilter(int customerId)
+        public void ApplyAccountFilter(string accountNumber)
         {
             _transactions = _transactions.Where( t =>
-                t.CustomerId == customerId ||
-                t.RecieverId == customerId
+                t.AccountNumber == accountNumber ||
+                t.RecieverAccountNumber == accountNumber
             );
         }
 

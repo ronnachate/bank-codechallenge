@@ -12,11 +12,11 @@
         public CustomerContext(DbContextOptions<CustomerContext> options) : base(options)
         {}
 
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<CustomerAccount> CustomerAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfiguration(new CustomerEntityTypeConfiguration());
+            builder.ApplyConfiguration(new CustomerAccountEntityTypeConfiguration());
 
             builder.HasDefaultSchema("public");
             base.OnModelCreating(builder);

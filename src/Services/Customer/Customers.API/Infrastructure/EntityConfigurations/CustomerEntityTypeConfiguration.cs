@@ -3,25 +3,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace CodeChallenge.Services.Customers.Api.Infrastructure.EntityConfigurations
 {
-    class CustomerEntityTypeConfiguration
-        : IEntityTypeConfiguration<Customer>
+    class CustomerAccountEntityTypeConfiguration
+        : IEntityTypeConfiguration<CustomerAccount>
     {
-        public void Configure(EntityTypeBuilder<Customer> builder)
+        public void Configure(EntityTypeBuilder<CustomerAccount> builder)
         {
             builder.HasKey(ci => ci.Id);
 
             builder.Property(ci => ci.Id)
                .IsRequired();
 
-            builder.Property(cb => cb.Code)
+            builder.Property(cb => cb.AccountNumber)
                .IsRequired()
                .HasMaxLength(100);
 
-            builder.Property(cb => cb.Name)
+            builder.Property(cb => cb.AccountName)
                .IsRequired()
-               .HasMaxLength(100);
-
-            builder.Property(cb => cb.Lastname)
                .HasMaxLength(100);
 
             builder.Property(cb => cb.CurrentBalance)

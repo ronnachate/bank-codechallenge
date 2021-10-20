@@ -30,15 +30,15 @@ namespace CodeChallenge.Services.Customers.Api.IntegrationEvents.EventHandling
 
                 try
                 {
-                    var customer = await _customerContext.Customers
-                        .SingleOrDefaultAsync(c => c.Id == @event.CustomerId);
-                    if(customer != null)
+                    var account = await _customerContext.CustomerAccounts
+                        .SingleOrDefaultAsync(c => c.AccountNumber == @event.AccountNumber);
+                    if(account != null)
                     {
                         
                     }
                     else
                     {
-                        _logger.LogError($"[{Program.AppName}] ERROR update customer balance no customer found: {@event.CustomerId}");
+                        _logger.LogError($"[{Program.AppName}] ERROR update customer balance no customer found: {@event.AccountNumber}");
                     }
 
                 }

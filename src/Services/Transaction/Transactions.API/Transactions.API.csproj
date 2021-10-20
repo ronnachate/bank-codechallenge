@@ -53,6 +53,9 @@
 	  <ProjectReference Include="..\..\..\Shared\DataObject\CodeChallenge.DataObject.csproj">
 	    <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
 	  </ProjectReference>
+	  <ProjectReference Include="..\..\..\Shared\Util\CodeChallenge.Util.csproj">
+	    <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+	  </ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Models\" />

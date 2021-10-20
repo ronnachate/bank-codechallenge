@@ -38,7 +38,7 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(ResultSet<Transaction>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<ResultSet<Transaction>>> GetTransactionResultSetAsync(
-            [FromQuery] int? customerId,
+            [FromQuery] string accountNumber,
             [FromQuery] int? typeId,
             [FromQuery] int page = 1,
             [FromQuery] int rows = 10)
@@ -49,9 +49,9 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
                     .Include(t => t.TransactionType)
                     .AsQueryable();
                 var resultSet = new TransactionResult(transaction, rows);
-                if (customerId != null)
+                if (!string.IsNullOrEmpty(accountNumber))
                 {
-                    resultSet.ApplyCustomerFilter((int)customerId);
+                    resultSet.ApplyAccountFilter(accountNumber);
                 }
                 if (typeId != null)
                 {

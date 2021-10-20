@@ -10,18 +10,17 @@
 
         public string TransactionNumber { get; set; }
 
-        public int CustomerId { get; set; }
+        public string AccountNumber { get; set; }
 
-        public string CustomerName { get; set; }
+        public string AccountName { get; set; }
 
         public decimal Amount { get; set; }
 
         public decimal Fee { get; set; }
 
-        public int? RecieverId { get; set; }
+        public string RecieverAccountNumber { get; set; }
 
-        public string RecieverName { get; set; }
-
+        public string RecieverAccountName { get; set; }
 
         public decimal GetNetAmout()
         {

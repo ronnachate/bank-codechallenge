@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace CodeChallenge.Services.Customers.Api.Models
 {
-    public class CustomerResult
+    public class CustomerAccountResult
     {
         private int _rows = 0;
-        private IQueryable<Customer> _customers;
-        public CustomerResult(IQueryable<Customer> customers, int rows)
+        private IQueryable<CustomerAccount> _customers;
+        public CustomerAccountResult(IQueryable<CustomerAccount> customers, int rows)
         {
             _customers = customers;
             _rows = rows;
         }
 
-        public CustomerResult(IQueryable<Customer> customers)
+        public CustomerAccountResult(IQueryable<CustomerAccount> customers)
         {
             _customers = customers;
         }
@@ -25,20 +25,19 @@ namespace CodeChallenge.Services.Customers.Api.Models
         public void ApplySearchFilter(string q)
         {
             _customers = _customers.Where(c =>
-                EF.Functions.Like(c.Name, $"%{q}%")
-                || EF.Functions.Like(c.Lastname, $"%{q}%")
+                EF.Functions.Like(c.AccountName, $"%{q}%")
             );
         }
 
-        public async Task<ResultSet<Customer>> GetItemsByPageAsync(int page)
+        public async Task<ResultSet<CustomerAccount>> GetItemsByPageAsync(int page)
         {
             var totalItems = await _customers.CountAsync();
             var itemsOnPage = _customers.Skip((page - 1) * this._rows).Take(this._rows).ToListAsync();
-            var resultset = new ResultSet<Customer>(page, _rows, totalItems, await itemsOnPage);
+            var resultset = new ResultSet<CustomerAccount>(page, _rows, totalItems, await itemsOnPage);
             return resultset;
         }
 
-        public async Task<List<Customer>> GetAllItemsAsync()
+        public async Task<List<CustomerAccount>> GetAllItemsAsync()
         {
             return await _customers.ToListAsync();
         }
