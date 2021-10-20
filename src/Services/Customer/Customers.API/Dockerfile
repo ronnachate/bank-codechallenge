@@ -5,8 +5,6 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
 WORKDIR /src
 
-# It's important to keep lines from here down to "COPY . ." identical in all Dockerfiles
-# to take advantage of Docker's build cache, to speed up local container builds
 COPY "CodeChallenge.sln" "CodeChallenge.sln"
 
 COPY "BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj" "BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj"
