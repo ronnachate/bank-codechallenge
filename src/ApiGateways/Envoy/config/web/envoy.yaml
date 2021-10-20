@@ -76,7 +76,7 @@ static_resources:
     lb_policy: round_robin
     hosts:
     - socket_address:
-        address: merchant-api
+        address: customer-api
         port_value: 80
   - name: transaction
     connect_timeout: 0.25s

@@ -29,7 +29,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=Host=postgresdata;User ID=postgres;Password=abc1234;Database=customer;Pooling=true;
-      - GatewayUrl=http://webapigw
+      - EventBusConnection=${CC_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${CC_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${CC_SERVICE_BUS_PASSWORD}
+      - Serilog__MinimumLevel__Override__CodeChallenge.BuildingBlocks.EventBusRabbitMQ=Verbose
+      - Serilog__MinimumLevel__Override__ordering-api=Verbose
       - PATH_BASE=/customer-api
       - GRPC_PORT=81
       - PORT=80
@@ -43,6 +47,9 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=Host=postgresdata;User ID=postgres;Password=1q2w3e4r;Database=transaction;Pooling=true;
       - GatewayUrl=http://webapigw
+      - EventBusConnection=${CC_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${CC_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${CC_SERVICE_BUS_PASSWORD}
       - Serilog__MinimumLevel__Override__CodeChallenge.BuildingBlocks.EventBusRabbitMQ=Verbose
       - Serilog__MinimumLevel__Override__ordering-api=Verbose
       - PATH_BASE=/transaction-api

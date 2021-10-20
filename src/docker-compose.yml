@@ -17,7 +17,9 @@ services:
       context: .
       dockerfile: Services/Customer/Customers.API/Dockerfile
     depends_on:
+    depends_on:
       - postgresdata
+      - rabbitmq
 
   transaction-api:
     image: ${REGISTRY:-wedev}/transaction.api:${PLATFORM:-linux}-${TAG:-latest}
@@ -25,7 +27,9 @@ services:
       context: .
       dockerfile: Services/Transaction/Transactions.API/Dockerfile
     depends_on:
+    depends_on:
       - postgresdata
+      - rabbitmq
 
   webapigw:
     image: envoyproxy/envoy:v1.11.1
