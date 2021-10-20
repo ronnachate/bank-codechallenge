@@ -26,17 +26,20 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
         private readonly IEventBus _eventBus;
         private readonly ILogger<TransactionController> _logger;
         private readonly ICustomerService _customerService;
+        private readonly IOptions<TransactionSettings> _settings;
 
         public TransactionController(
             ILogger<TransactionController> logger,
             TransactionContext transactionContext,
             ICustomerService customerService,
+            IOptions<TransactionSettings> settings,
             IEventBus eventBus)
         {
             _logger = logger;
             _transactionContext = transactionContext;
             _customerService = customerService;
             _eventBus = eventBus;
+            _settings = settings;
         }
 
         [HttpGet]
@@ -78,7 +81,11 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
             {
                 if (request.Amount > 0)
                 {
-                    var allowTypeId = new List<int> { 1, 2, 3 };
+                    var allowTypeId = new List<int> {
+                        (int)TransactionTypeEnum.Deposit,
+                        (int)TransactionTypeEnum.Withdraw,
+                        (int)TransactionTypeEnum.Transfer
+                    };
                     //templary put here like this, due to test time limit
                     if(!allowTypeId.Contains(request.TransactionTypeId))
                     {
@@ -90,6 +97,7 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
                     {
                         TransactionTypeId = request.TransactionTypeId,
                         Amount = request.Amount,
+                        Fee = 0M,
                         Created = DateTime.Now
                     };
                     try
@@ -102,6 +110,7 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
                         _logger.LogError("[{AppName}] ERROR create new transaction: No account found with {NewAccountRequest}", Program.AppName, request);
                         return BadRequest();
                     }
+
 
                     if (request.TransactionTypeId == (int)TransactionTypeEnum.Transfer)
                     {
@@ -117,7 +126,10 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
                             return BadRequest();
                         }
                     }
-
+                    else if(request.TransactionTypeId == (int)TransactionTypeEnum.Deposit)
+                    {
+                        transaction.Fee = TransactionHelper.GetTransactionFee(transaction.Amount, _settings.Value.PercentageOfFeeCharged);
+                    }
 
                     await _transactionContext.Transactions.AddAsync(transaction);
                     await _transactionContext.SaveChangesAsync();
@@ -126,7 +138,7 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
                     await _transactionContext.SaveChangesAsync();
 
                     var notifyEvent = new TransactionCreatedEvent(
-                        transaction.TransactionTypeId, transaction.Amount, transaction.AccountNumber, transaction.RecieverAccountNumber
+                        transaction.TransactionTypeId, transaction.GetNetAmout(), transaction.AccountNumber, transaction.RecieverAccountNumber
                     );
                     _eventBus.Publish(notifyEvent);
 
