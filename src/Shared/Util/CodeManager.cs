@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace WeDev.Payment.Util
+namespace CodeChallenge.Util
 {
     public static class CodeManager
     {
         private static readonly int ZERO_PADDING_LENGTH = 8;
         private static readonly string TRANSACTION_FLAG = "3";
-        public static string GenerateTransactionCode(int transactionId, int paddingFlag)
+        public static string GenerateTransactionCode(int transactionId)
         {
             var code = transactionId.ToString().PadLeft(ZERO_PADDING_LENGTH, '0');
             var evenFlag = IsEvenFlag(transactionId);
-            var lastDigit = LastSumOfTWO(code, paddingFlag);
-            //pading validate flag
-            code = $"{TRANSACTION_FLAG}{evenFlag}{paddingFlag}{code}{lastDigit}";
+            var lastDigit = LastSumOfTWO(code);
+            code = $"{TRANSACTION_FLAG}{evenFlag}{code}{lastDigit}";
             return code;
         }
 
@@ -27,15 +26,14 @@ namespace WeDev.Payment.Util
                 var isValid = true;
                 var paymentFlag = m.Groups[1].Value;
                 var evenFlag = m.Groups[2].Value;
-                var paddingFlag = Int32.Parse(m.Groups[3].Value);
-                var transactionStr = m.Groups[4].Value;
-                var lastDigit = m.Groups[5].Value;
+                var transactionStr = m.Groups[3].Value;
+                var lastDigit = m.Groups[4].Value;
                 var transactionId = Int32.Parse(transactionStr);
                 if(paymentFlag != TRANSACTION_FLAG)
                 {
                     isValid = false;
                 }
-                if (LastSumOfTWO(transactionStr, paddingFlag) != lastDigit)
+                if (LastSumOfTWO(transactionStr) != lastDigit)
                 {
                     isValid = false;
                 }
@@ -57,13 +55,12 @@ namespace WeDev.Payment.Util
             return "2";
         }
 
-        private static string LastSumOfTWO(string code, int paddingFlag)
+        private static string LastSumOfTWO(string code)
         {
             var codeArray = code.ToCharArray();
             var sumOfLastTWO = Convert.ToInt32(codeArray[ZERO_PADDING_LENGTH].ToString())
                 + Convert.ToInt32(codeArray[7].ToString())
-                + Convert.ToInt32(codeArray[6].ToString())
-                + paddingFlag;
+                + Convert.ToInt32(codeArray[6].ToString());
             return (sumOfLastTWO % 10).ToString();
         }
     }

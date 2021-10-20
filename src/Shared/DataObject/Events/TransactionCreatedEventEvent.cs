@@ -2,7 +2,7 @@
 
 namespace CodeChallenge.DataObjects.Events
 {
-    public record CustomerBalanceUpdatedEvent : IntegrationEvent
+    public record TransactionCreatedEvent : IntegrationEvent
     {
         public string AccountNumber { get; set; }
 
@@ -10,16 +10,20 @@ namespace CodeChallenge.DataObjects.Events
 
         public decimal Amount { get; set; }
 
+        public string RecieverAccountNumber { get; set; }
 
-        public CustomerBalanceUpdatedEvent(
-            string accountNumber,
+
+        public TransactionCreatedEvent(
             int typeId,
-            decimal amount
+            decimal amount,
+            string accountNumber,
+            string recieverAccountNumber
         )
         {
             AccountNumber = accountNumber;
             TypeId = typeId;
             Amount = amount;
+            RecieverAccountNumber = recieverAccountNumber;
         }
     }
 }

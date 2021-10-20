@@ -12,10 +12,10 @@ namespace CodeChallenge.DataObjects.Transactions
     public enum TransactionTypeEnum
     {
         [Description("Deposit")]
-        NoAction = 1,
+        Deposit = 1,
         [Description("Withdraw")]
-        Pending = 2,
+        Withdraw = 2,
         [Description("Transfer")]
-        Partial = 3,
+        Transfer = 3,
     }
 }
