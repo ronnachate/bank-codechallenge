@@ -9,20 +9,20 @@ using CodeChallenge.Services.Customers.Api.Infrastructure;
 
 namespace CodeChallenge.Services.Customers.Api.IntegrationEvents.EventHandling
 {
-    public class CustomerBalanceUpdatedEventHandler : IIntegrationEventHandler<CustomerBalanceUpdatedEvent>
+    public class TransactionCreatedEventHandler : IIntegrationEventHandler<TransactionCreatedEvent>
     {
         private readonly CustomerContext _customerContext;
-        private readonly ILogger<CustomerBalanceUpdatedEventHandler> _logger;
+        private readonly ILogger<TransactionCreatedEventHandler> _logger;
 
-        public CustomerBalanceUpdatedEventHandler(
+        public TransactionCreatedEventHandler(
             CustomerContext customerContext,
-            ILogger<CustomerBalanceUpdatedEventHandler> logger)
+            ILogger<TransactionCreatedEventHandler> logger)
         {
             _customerContext = customerContext;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Handle(CustomerBalanceUpdatedEvent @event)
+        public async Task Handle(TransactionCreatedEvent @event)
         {
             using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
             {

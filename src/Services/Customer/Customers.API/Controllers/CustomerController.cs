@@ -9,6 +9,7 @@ using CodeChallenge.Services.Customers.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using CodeChallenge.DataObjects.Customers;
 using CodeChallenge.Services.Customers.Api.Models;
+using CodeChallenge.Services.Customers.Api.Services;
 using CodeChallenge.Services.Customers.Api.IntegrationEvents;
 
 
@@ -19,14 +20,17 @@ namespace CodeChallenge.Services.Customers.Api.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly CustomerContext _customerContext;
+        private readonly IIBANService _iBANService;
         private readonly ILogger<CustomerController> _logger;
 
         public CustomerController(
+            IIBANService iBANService,
             ILogger<CustomerController> logger,
             CustomerContext customerContext)
         {
             _logger = logger;
             _customerContext = customerContext;
+            _iBANService = iBANService;
         }
 
         [HttpGet("account")]
@@ -76,28 +80,29 @@ namespace CodeChallenge.Services.Customers.Api.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("account")]
         [ProducesResponseType(typeof(NewAccountResponse), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<NewAccountResponse>> NewAccountAsync([FromBody] NewAccountRequest request)
         {
             try
             {
-                var accountNumber = "";
-                var account = new CustomerAccount()
-                {
-                    AccountNumber = accountNumber,
-                    AccountName = request.AccountName,
-                    CurrentBalance = 0M,
-                    Created = DateTime.Now
-                };
+                var accountNumber = await _iBANService.GetRandomIBANAsync();
 
-                await _customerContext.CustomerAccounts.AddAsync(account);
+                //var account = new CustomerAccount()
+                //{
+                //    AccountNumber = accountNumber,
+                //    AccountName = request.AccountName,
+                //    CurrentBalance = 0M,
+                //    Created = DateTime.Now
+                //};
 
-                await _customerContext.SaveChangesAsync();
+                //await _customerContext.CustomerAccounts.AddAsync(account);
 
-                var res = new NewAccountResponse().ToSuccess("Create account success.");
-                res.AccountNumber = account.AccountNumber;
-                return Ok(res);
+                //await _customerContext.SaveChangesAsync();
+
+                //var res = new NewAccountResponse().ToSuccess("Create account success.");
+                //res.AccountNumber = account.AccountNumber;
+                return Ok(accountNumber);
             }
             catch (Exception ex)
             {

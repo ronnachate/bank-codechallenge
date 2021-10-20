@@ -3,7 +3,6 @@ using Autofac.Extensions.DependencyInjection;
 using CodeChallenge.Services.Customers.Api.Infrastructure.Filters;
 using CodeChallenge.DataObjects.Events;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using CodeChallenge.BuildingBlocks.EventBus;
@@ -17,6 +16,7 @@ using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 using System;
 using Microsoft.EntityFrameworkCore;
+using CodeChallenge.Services.Customers.Api.Services;
 using CodeChallenge.Services.Customers.Api.Infrastructure;
 using CodeChallenge.Services.Customers.Api.IntegrationEvents;
 using CodeChallenge.Services.Customers.Api.IntegrationEvents.EventHandling;
@@ -104,6 +104,9 @@ namespace CodeChallenge.Services.Customers.Api
             });
             services.AddTransient<ICustomerIntegrationEventService, CustomerIntegrationEventService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddHttpClient<IIBANService, IBANService>();
+
             services.AddOptions();
 
             services.AddCustomDbContext(Configuration);
@@ -173,14 +176,14 @@ namespace CodeChallenge.Services.Customers.Api
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
 
-            services.AddTransient<CustomerBalanceUpdatedEventHandler>();
+            services.AddTransient<TransactionCreatedEventHandler>();
         }
 
         private void ConfigureEventBus(IApplicationBuilder app)
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            eventBus.Subscribe<CustomerBalanceUpdatedEvent, CustomerBalanceUpdatedEventHandler>();
+            eventBus.Subscribe<TransactionCreatedEvent, TransactionCreatedEventHandler>();
         }
     }
 

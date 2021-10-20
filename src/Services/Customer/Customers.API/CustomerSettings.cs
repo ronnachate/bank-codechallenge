@@ -4,7 +4,7 @@
     {
         public string ConnectionString { get; set; }
 
-        public string GatewayUrl { get; set; }
+        public string IBANReqestUrl { get; set; }
 
     }
 }
