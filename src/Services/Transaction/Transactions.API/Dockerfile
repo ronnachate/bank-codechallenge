@@ -21,7 +21,6 @@ COPY "Services/Transaction/Transactions.API/Transactions.API.csproj" "Services/T
 COPY "Tests/Services/Application.FunctionalTests/Application.FunctionalTests.csproj" "Tests/Services/Application.FunctionalTests/Application.FunctionalTests.csproj"
 
 COPY "Shared/DataObject/CodeChallenge.DataObject.csproj" "Shared/DataObject/CodeChallenge.DataObject.csproj"
-COPY "Shared/Util/CodeChallenge.Util.csproj" "Shared/Util/CodeChallenge.Util.csproj"
 
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 

@@ -22,7 +22,6 @@ COPY "Tests/Services/Application.FunctionalTests/Application.FunctionalTests.csp
 
 
 COPY "Shared/DataObject/CodeChallenge.DataObject.csproj" "Shared/DataObject/CodeChallenge.DataObject.csproj"
-COPY "Shared/Util/CodeChallenge.Util.csproj" "Shared/Util/CodeChallenge.Util.csproj"
 
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 

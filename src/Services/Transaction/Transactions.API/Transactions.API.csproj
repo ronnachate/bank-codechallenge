@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<RootNamespace>WeDev.Payment.Services.Transactions.Api</RootNamespace>
+		<RootNamespace>CodeChallenge.Services.Transactions.Api</RootNamespace>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(RunConfiguration)' == 'Transactions.API' " />
