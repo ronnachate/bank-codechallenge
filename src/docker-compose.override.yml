@@ -1,0 +1,71 @@
+﻿version: '3.8'
+
+services:
+  seq:
+    environment:
+      - ACCEPT_EULA=Y
+      - TZ=Asia/Jakarta
+    ports:
+      - "5340:80"
+
+  postgresdata:
+    environment:
+      - POSTGRES_PASSWORD=abc1234
+      - TZ=Asia/Jakarta
+    ports:
+      - "5432:5432"
+    volumes:
+      - cc_postgresdata:/var/lib/postgresql/data
+
+  rabbitmq:
+    environment:
+      - TZ=Asia/Jakarta
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  customer-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=Host=postgresdata;User ID=postgres;Password=abc1234;Database=customer;Pooling=true;
+      - GatewayUrl=http://webapigw
+      - PATH_BASE=/customer-api
+      - GRPC_PORT=81
+      - PORT=80
+      - TZ=Asia/Jakarta
+    ports:
+      - "4001:80"
+
+  transaction-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=Host=postgresdata;User ID=postgres;Password=1q2w3e4r;Database=transaction;Pooling=true;
+      - GatewayUrl=http://webapigw
+      - Serilog__MinimumLevel__Override__CodeChallenge.BuildingBlocks.EventBusRabbitMQ=Verbose
+      - Serilog__MinimumLevel__Override__ordering-api=Verbose
+      - PATH_BASE=/transaction-api
+      - GRPC_PORT=81
+      - PORT=80
+      - TZ=Asia/Jakarta
+    ports:
+      - "4002:80"
+
+ 
+
+
+  webapigw:
+    volumes:
+      - ./ApiGateways/Envoy/config/web:/etc/envoy
+    ports:
+    - "4100:80"
+
+
+
+volumes:
+  cc_postgresdata:
+    external: false
+
+
+

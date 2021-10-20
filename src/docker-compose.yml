@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+
+  seq:
+    image: datalust/seq:latest
+
+  postgresdata:
+    image: postgres
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  customer-api:
+    image: ${REGISTRY:-codechallenge}/customer.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Services/Customer/Customers.API/Dockerfile
+    depends_on:
+      - postgresdata
+
+  transaction-api:
+    image: ${REGISTRY:-wedev}/transaction.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Services/Transaction/Transactions.API/Dockerfile
+    depends_on:
+      - postgresdata
+
+  webapigw:
+    image: envoyproxy/envoy:v1.11.1
