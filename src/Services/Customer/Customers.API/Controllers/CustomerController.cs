@@ -104,7 +104,7 @@ namespace CodeChallenge.Services.Customers.Api.Controllers
 
                 var res = new NewAccountResponse().ToSuccess("Create account success.");
                 res.AccountNumber = account.AccountNumber;
-                return Ok(accountNumber);
+                return Ok(res);
             }
             catch (Exception ex)
             {

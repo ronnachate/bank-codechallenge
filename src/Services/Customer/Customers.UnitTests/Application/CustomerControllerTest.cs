@@ -8,7 +8,6 @@ using CodeChallenge.DataObjects;
 using CodeChallenge.DataObjects.Customers;
 using CodeChallenge.Services.Customers.Api.Models;
 using Moq;
-using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -58,6 +57,37 @@ namespace UnitTest.Customer.Application
             Assert.Equal(1, resultset.Page);
             Assert.Equal(15, resultset.ItemPerPage);
             Assert.Equal(3, resultset.Items.Count());
+
+        }
+
+        [Fact]
+        public async Task New_account_success()
+        {
+            var mockAccountNumber = "NL69ABNA4040435087";
+            _iBANServiceMock.Setup(x => x.GetRandomIBANAsync())
+                .Returns(mockAccountNumber);
+
+            var customerContext = new CustomerContext(_dbOptions);
+            var customerController = new CustomerController(_iBANServiceMock.Object, _loggerMock.Object, customerContext);
+            var accountRequest = new NewAccountRequest
+            {
+                AccountName = "NewCustomer1"
+            };
+            var actionResult = await customerController.NewAccountAsync(accountRequest);
+            //Assert
+            Assert.IsType<ActionResult<NewAccountResponse>>(actionResult);
+            var result = actionResult.Result as OkObjectResult;
+            var reponse = Assert.IsAssignableFrom<NewAccountResponse>(result.Value);
+            Assert.Equal("00", reponse.ResponseCode);
+            Assert.Equal(mockAccountNumber, reponse.AccountNumber);
+
+            var getAccountResult = await customerController.GetAccountByNumberAsync(mockAccountNumber);
+
+            //Assert
+            Assert.IsType<ActionResult<CustomerAccount>>(getAccountResult);
+            result = getAccountResult.Result as OkObjectResult;
+            var account = Assert.IsAssignableFrom<CustomerAccount>(result.Value);
+            Assert.Equal("NewCustomer1", account.AccountName);
 
         }
 
