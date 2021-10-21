@@ -126,6 +126,7 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
                     var transaction = new Transaction
                     {
                         TransactionTypeId = request.TransactionTypeId,
+                        AccountNumber = request.AccountNumber,
                         Amount = request.Amount,
                         Fee = 0M,
                         Created = DateTime.Now
@@ -133,6 +134,14 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
                     try
                     {
                         var customerAccount = await _customerService.GetAccountByNumberAsync(request.AccountNumber);
+                        if(request.TransactionTypeId == (int)TransactionTypeEnum.Withdraw)
+                        {
+                            if(request.Amount > customerAccount.CurrentBalance)
+                            {
+                                _logger.LogError("[{AppName}] ERROR create new transaction: invalid withdaraw amount {NewAccountRequest}", Program.AppName, request);
+                                return BadRequest();
+                            }
+                        }
                         transaction.AccountName = customerAccount.AccountName;
                     }
                     catch (Exception)

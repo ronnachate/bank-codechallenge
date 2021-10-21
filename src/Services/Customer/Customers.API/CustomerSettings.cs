@@ -8,5 +8,9 @@
 
         public string RemoteDriverUrl { get; set; }
 
+        public string RemoteBrowserVersion { get; set; }
+
+        public string RemotePlatformName { get; set; }
+
     }
 }

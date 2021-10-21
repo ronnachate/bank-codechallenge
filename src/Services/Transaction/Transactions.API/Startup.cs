@@ -17,6 +17,7 @@ using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using CodeChallenge.Services.Transactions.Api.Services;
 using CodeChallenge.Services.Transactions.Api.Infrastructure;
 using CodeChallenge.Services.Transactions.Api.IntegrationEvents;
 
@@ -103,6 +104,8 @@ namespace CodeChallenge.Services.Transactions.Api
                     .AllowCredentials());
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddHttpClient<ICustomerService, CustomerService>();
 
             services.AddOptions();
 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Serilog.Context;
 using Microsoft.EntityFrameworkCore;
 using CodeChallenge.DataObjects.Events;
+using CodeChallenge.DataObjects.Transactions;
 using CodeChallenge.Services.Customers.Api.Infrastructure;
 
 namespace CodeChallenge.Services.Customers.Api.IntegrationEvents.EventHandling
@@ -34,7 +35,24 @@ namespace CodeChallenge.Services.Customers.Api.IntegrationEvents.EventHandling
                         .SingleOrDefaultAsync(c => c.AccountNumber == @event.AccountNumber);
                     if(account != null)
                     {
-                        
+                        switch (@event.TypeId)
+                        {
+                            case (int)TransactionTypeEnum.Deposit:
+                                account.CurrentBalance = account.CurrentBalance + @event.Amount;
+                                break;
+
+                            case (int)TransactionTypeEnum.Withdraw:
+                                account.CurrentBalance = account.CurrentBalance - @event.Amount;
+                                break;
+
+                            case (int)TransactionTypeEnum.Transfer:
+                                var reciever = await _customerContext.CustomerAccounts
+                                     .SingleOrDefaultAsync(c => c.AccountNumber == @event.RecieverAccountNumber);
+                                account.CurrentBalance = account.CurrentBalance - @event.Amount;
+                                reciever.CurrentBalance = reciever.CurrentBalance + @event.Amount;
+                                break;
+                        }
+                        await _customerContext.SaveChangesAsync();
                     }
                     else
                     {

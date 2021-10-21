@@ -19,7 +19,7 @@ namespace CodeChallenge.Services.Transactions.Api.Services
         {
             _httpClient = httpClient;
 
-            _remoteServiceBaseUrl = $"{settings.Value.GatewayUrl}/m/api/v1/merchant/";
+            _remoteServiceBaseUrl = $"{settings.Value.GatewayUrl}/c/api/v1/customer/";
         }
 
         public async Task<CustomerAccount> GetAccountByNumberAsync(string accountNumber)
