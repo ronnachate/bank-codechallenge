@@ -29,7 +29,7 @@
         public TransactionContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<TransactionContext>()
-                .UseNpgsql("Host=127.0.0.1;User ID=postgres;Password=1q2w3e4r;Database=transaction;Pooling=true;");
+                .UseNpgsql("Host=127.0.0.1;User ID=postgres;Password=abc1234;Database=transaction;Pooling=true;");
 
             return new TransactionContext(optionsBuilder.Options);
         }
