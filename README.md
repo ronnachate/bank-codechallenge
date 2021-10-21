@@ -1,5 +1,6 @@
 Code Challenge
 =====================
+API for account create and make transaction
 
 ## Installation
     - install docker-ce
@@ -16,3 +17,6 @@ Code Challenge
 
 ## Apllication stop command
     - docker-compose down
+
+## Apllication usage
+    - for local docker, please visit http://localhost:4001 for customer api and http://localhost:4002 for transaction api,
