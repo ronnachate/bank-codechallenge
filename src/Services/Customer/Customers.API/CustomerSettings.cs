@@ -6,5 +6,7 @@
 
         public string IBANReqestUrl { get; set; }
 
+        public string RemoteDriverUrl { get; set; }
+
     }
 }

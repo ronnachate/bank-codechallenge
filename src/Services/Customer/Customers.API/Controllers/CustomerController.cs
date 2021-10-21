@@ -86,22 +86,22 @@ namespace CodeChallenge.Services.Customers.Api.Controllers
         {
             try
             {
-                var accountNumber = await _iBANService.GetRandomIBANAsync();
+                var accountNumber = _iBANService.GetRandomIBANAsync();
 
-                //var account = new CustomerAccount()
-                //{
-                //    AccountNumber = accountNumber,
-                //    AccountName = request.AccountName,
-                //    CurrentBalance = 0M,
-                //    Created = DateTime.Now
-                //};
+                var account = new CustomerAccount()
+                {
+                    AccountNumber = accountNumber,
+                    AccountName = request.AccountName,
+                    CurrentBalance = 0M,
+                    Created = DateTime.Now
+                };
 
-                //await _customerContext.CustomerAccounts.AddAsync(account);
+                await _customerContext.CustomerAccounts.AddAsync(account);
 
-                //await _customerContext.SaveChangesAsync();
+                await _customerContext.SaveChangesAsync();
 
-                //var res = new NewAccountResponse().ToSuccess("Create account success.");
-                //res.AccountNumber = account.AccountNumber;
+                var res = new NewAccountResponse().ToSuccess("Create account success.");
+                res.AccountNumber = account.AccountNumber;
                 return Ok(accountNumber);
             }
             catch (Exception ex)

@@ -105,7 +105,7 @@ namespace CodeChallenge.Services.Customers.Api
             services.AddTransient<ICustomerIntegrationEventService, CustomerIntegrationEventService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddHttpClient<IIBANService, IBANService>();
+            services.AddTransient<IIBANService, IBANService>();
 
             services.AddOptions();
 

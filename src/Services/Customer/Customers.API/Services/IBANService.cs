@@ -1,37 +1,42 @@
 ﻿using Microsoft.Extensions.Options;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Net;
+using System;
 using System.IO;
-using System.Text;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 
 namespace CodeChallenge.Services.Customers.Api.Services
 {
     public class IBANService : IIBANService
     {
-        private HttpClient _httpClient;
         private readonly string _requestUrl;
+        private readonly string _remoteDriverUrl;
+        private readonly string IBAN_DISPLAY_CLASS = "ibandisplay";
+        private readonly int JS_EXECUTE_TIMEOUT = 1000;
 
-        public IBANService(HttpClient httpClient, IOptions<CustomerSettings> settings)
+        public IBANService(IOptions<CustomerSettings> settings)
         {
-            _httpClient = httpClient;
-
             _requestUrl = settings.Value.IBANReqestUrl;
+            _remoteDriverUrl = settings.Value.RemoteDriverUrl; 
         }
 
-        public async Task<string> GetRandomIBANAsync()
+        public string GetRandomIBANAsync()
         {
-            //var responseString = await _httpClient.GetStringAsync(_requestUrl);
 
+            var chromeOptions = new ChromeOptions();
+            chromeOptions.BrowserVersion = "94.0";
+            chromeOptions.PlatformName = "Linux";
+            IWebDriver driver = new RemoteWebDriver(new Uri(_remoteDriverUrl), chromeOptions);
 
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(_requestUrl);
-            httpWebRequest.Method = "GET";
+            driver.Navigate().GoToUrl(_requestUrl);
+            var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(JS_EXECUTE_TIMEOUT));
+            wait.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
+            var iBan = driver.FindElement(By.ClassName(IBAN_DISPLAY_CLASS)).Text;
+            driver.Quit();
 
-            var response = (HttpWebResponse)httpWebRequest.GetResponse();
-
-            var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-
-            return responseString;
+            return iBan;
 
         }
     }

@@ -24,11 +24,18 @@ services:
       - "15672:15672"
       - "5672:5672"
 
+  selenium:
+    environment:
+      - TZ=Asia/Jakarta
+    ports:
+      - "4444:4444"
+
   customer-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=Host=postgresdata;User ID=postgres;Password=abc1234;Database=customer;Pooling=true;
+      - RemoteDriverUrl=http://selenium:4444/wd/hub
       - IBANReqestUrl=http://randomiban.com/?country=Netherlands
       - EventBusConnection=${CC_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${CC_SERVICE_BUS_USERNAME}
@@ -47,7 +54,7 @@ services:
       - PercentageOfFeeCharged=0.1
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=Host=postgresdata;User ID=postgres;Password=1q2w3e4r;Database=transaction;Pooling=true;
+      - ConnectionString=Host=postgresdata;User ID=postgres;Password=abc1234;Database=transaction;Pooling=true;
       - GatewayUrl=http://webapigw
       - EventBusConnection=${CC_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${CC_SERVICE_BUS_USERNAME}

@@ -28,7 +28,7 @@
         public CustomerContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<CustomerContext>()
-                .UseNpgsql("Host=127.0.0.1;User ID=postgres;Password=1q2w3e4r;Database=customer;Pooling=true;");
+                .UseNpgsql("Host=127.0.0.1;User ID=postgres;Password=abc1234;Database=customer;Pooling=true;");
 
             return new CustomerContext(optionsBuilder.Options);
         }

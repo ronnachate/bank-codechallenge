@@ -8,6 +8,9 @@ services:
   postgresdata:
     image: postgres
 
+  selenium:
+    image: selenium/standalone-chrome
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
 
