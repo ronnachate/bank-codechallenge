@@ -19,7 +19,7 @@ namespace CodeChallenge.Util
         public static bool IsValidTransactionCode(string transactionCode)
         {
 
-            Regex r = new Regex(@"(\d{1})(\d{1})(\d{1})(\d{8})(\d{1})");
+            Regex r = new Regex(@"(\d{1})(\d{1})(\d{8})(\d{1})");
             Match m = r.Match(transactionCode);
             if (m.Success)
             {
@@ -29,7 +29,7 @@ namespace CodeChallenge.Util
                 var transactionStr = m.Groups[3].Value;
                 var lastDigit = m.Groups[4].Value;
                 var transactionId = Int32.Parse(transactionStr);
-                if(paymentFlag != TRANSACTION_FLAG)
+                if (paymentFlag != TRANSACTION_FLAG)
                 {
                     isValid = false;
                 }
@@ -58,9 +58,9 @@ namespace CodeChallenge.Util
         private static string LastSumOfTWO(string code)
         {
             var codeArray = code.ToCharArray();
-            var sumOfLastTWO = Convert.ToInt32(codeArray[ZERO_PADDING_LENGTH].ToString())
-                + Convert.ToInt32(codeArray[7].ToString())
-                + Convert.ToInt32(codeArray[6].ToString());
+            var sumOfLastTWO = Convert.ToInt32(codeArray[ZERO_PADDING_LENGTH - 1].ToString())
+                + Convert.ToInt32(codeArray[ZERO_PADDING_LENGTH - 2].ToString())
+                + Convert.ToInt32(codeArray[ZERO_PADDING_LENGTH - 3].ToString());
             return (sumOfLastTWO % 10).ToString();
         }
     }

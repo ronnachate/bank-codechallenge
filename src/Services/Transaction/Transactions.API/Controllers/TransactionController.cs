@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using CodeChallenge.BuildingBlocks.EventBus.Abstractions;
+using CodeChallenge.Services.Transactions.Api.IntegrationEvents;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using CodeChallenge.DataObjects;
@@ -23,7 +23,7 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
     public class TransactionController : ControllerBase
     {
         private readonly TransactionContext _transactionContext;
-        private readonly IEventBus _eventBus;
+        private readonly ITransactionIntegrationEventService _transactionIntegrationEventService;
         private readonly ILogger<TransactionController> _logger;
         private readonly ICustomerService _customerService;
         private readonly IOptions<TransactionSettings> _settings;
@@ -33,12 +33,12 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
             TransactionContext transactionContext,
             ICustomerService customerService,
             IOptions<TransactionSettings> settings,
-            IEventBus eventBus)
+            ITransactionIntegrationEventService transactionIntegrationEventService)
         {
             _logger = logger;
             _transactionContext = transactionContext;
             _customerService = customerService;
-            _eventBus = eventBus;
+            _transactionIntegrationEventService = transactionIntegrationEventService;
             _settings = settings;
         }
 
@@ -52,10 +52,9 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
         {
             try
             {
-                var transaction = _transactionContext.Transactions
-                    .Include(t => t.TransactionType)
+                var transactions = _transactionContext.Transactions
                     .AsQueryable();
-                var resultSet = new TransactionResult(transaction, rows);
+                var resultSet = new TransactionResult(transactions, rows);
                 if (!string.IsNullOrEmpty(accountNumber))
                 {
                     resultSet.ApplyAccountFilter(accountNumber);
@@ -73,9 +72,41 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
             }
         }
 
+        [HttpGet("{transactionNumber}")]
+        [ProducesResponseType(typeof(Transaction), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<Transaction>> GetTransactionByNumberAsync(string transactionNumber)
+        {
+            try
+            {
+                if (CodeManager.IsValidTransactionCode(transactionNumber))
+                {
+                    var all = await _transactionContext.Transactions.ToListAsync();
+                    var transaction = await _transactionContext.Transactions
+                        .SingleOrDefaultAsync(t => t.TransactionNumber == transactionNumber);
+                    if (transaction != null)
+                    {
+                        return Ok(transaction);
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
+                else
+                {
+                    return BadRequest("Invalid transactionNumber");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[{AppName}] ERROR get transaction by number: {Exception}", Program.AppName, ex);
+                return BadRequest();
+            }
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(NewTransactionResponse), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<NewTransactionResponse>> NewAccountAsync([FromBody] NewTransactionRequest request)
+        public async Task<ActionResult<NewTransactionResponse>> NewTransactionAsync([FromBody] NewTransactionRequest request)
         {
             try
             {
@@ -140,7 +171,7 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
                     var notifyEvent = new TransactionCreatedEvent(
                         transaction.TransactionTypeId, transaction.GetNetAmout(), transaction.AccountNumber, transaction.RecieverAccountNumber
                     );
-                    _eventBus.Publish(notifyEvent);
+                    _transactionIntegrationEventService.PublishThroughEventBusAsync(notifyEvent);
 
                     var res = new NewTransactionResponse().ToSuccess("Create new transaction success.");
                     res.TransactionNumber = transaction.TransactionNumber;
