@@ -80,7 +80,6 @@ namespace CodeChallenge.Services.Transactions.Api.Controllers
             {
                 if (CodeManager.IsValidTransactionCode(transactionNumber))
                 {
-                    var all = await _transactionContext.Transactions.ToListAsync();
                     var transaction = await _transactionContext.Transactions
                         .SingleOrDefaultAsync(t => t.TransactionNumber == transactionNumber);
                     if (transaction != null)
