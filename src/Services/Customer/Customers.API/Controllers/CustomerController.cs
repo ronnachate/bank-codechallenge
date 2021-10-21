@@ -10,8 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using CodeChallenge.DataObjects.Customers;
 using CodeChallenge.Services.Customers.Api.Models;
 using CodeChallenge.Services.Customers.Api.Services;
-using CodeChallenge.Services.Customers.Api.IntegrationEvents;
-
 
 namespace CodeChallenge.Services.Customers.Api.Controllers
 {
@@ -42,6 +40,10 @@ namespace CodeChallenge.Services.Customers.Api.Controllers
         {
             try
             {
+                if( page == null)
+                {
+                    page = 1;
+                }
                 var accounts = _customerContext.CustomerAccounts
                     .AsQueryable();
                 var resultSet = new CustomerAccountResult(accounts, (int)rows);
