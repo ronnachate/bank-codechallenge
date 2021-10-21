@@ -19,4 +19,6 @@ API for account create and make transaction
     - docker-compose down
 
 ## Apllication usage
-    - for local docker, please visit http://localhost:4001 for customer api and http://localhost:4002 for transaction api,
+    For local docker, please visit
+    - http://localhost:4001 for customer api
+    - http://localhost:4002 for transaction api,
